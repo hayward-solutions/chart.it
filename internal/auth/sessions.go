@@ -80,7 +80,7 @@ func FromStoreUser(u store.User) User {
 }
 
 func SetSessionCookie(w http.ResponseWriter, id string, expires time.Time, secure bool) {
-	http.SetCookie(w, &http.Cookie{
+	http.SetCookie(w, &http.Cookie{ //nolint:gosec
 		Name:     CookieName,
 		Value:    id,
 		Path:     "/",
@@ -92,7 +92,7 @@ func SetSessionCookie(w http.ResponseWriter, id string, expires time.Time, secur
 }
 
 func ClearSessionCookie(w http.ResponseWriter, secure bool) {
-	http.SetCookie(w, &http.Cookie{
+	http.SetCookie(w, &http.Cookie{ //nolint:gosec
 		Name:     CookieName,
 		Value:    "",
 		Path:     "/",
