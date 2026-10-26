@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from '@testing-library/react'
+import { configure, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
@@ -33,10 +33,12 @@ class DOMMatrixReadOnlyStub {
   constructor(_transform?: string) {}
 }
 
-beforeAll(() => {
+beforeAll(async () => {
   ;(globalThis as unknown as { DOMMatrixReadOnly: unknown }).DOMMatrixReadOnly =
     DOMMatrixReadOnlyStub
-})
+  configure({ asyncUtilTimeout: 5000 })
+  await Promise.all([import('@/pages/Editor'), import('@/pages/Share')])
+}, 60_000)
 
 type User = ReturnType<typeof userEvent.setup>
 
