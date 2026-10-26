@@ -1,0 +1,767 @@
+{
+  "schemaVersion": 1,
+  "title": "Azure hub and spoke network",
+  "settings": {
+    "background": "#ffffff",
+    "grid": "dots",
+    "snap": true,
+    "gridSize": 20,
+    "theme": "system"
+  },
+  "viewport": {
+    "x": 14,
+    "y": 14,
+    "zoom": 0.66
+  },
+  "nodes": [
+    {
+      "id": "onprem",
+      "type": "container",
+      "position": {
+        "x": 40,
+        "y": 180
+      },
+      "size": {
+        "width": 240,
+        "height": 300
+      },
+      "zIndex": 0,
+      "data": {
+        "label": "On-premises datacenter",
+        "containerKind": "generic",
+        "style": {},
+        "icon": {
+          "pack": "generic",
+          "id": "group-datacenter"
+        }
+      }
+    },
+    {
+      "id": "router",
+      "type": "icon",
+      "position": {
+        "x": 88,
+        "y": 64
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "onprem",
+      "zIndex": 30,
+      "data": {
+        "label": "VPN device",
+        "icon": {
+          "pack": "generic",
+          "id": "router"
+        },
+        "style": {
+          "labelPosition": "top"
+        }
+      }
+    },
+    {
+      "id": "servers",
+      "type": "icon",
+      "position": {
+        "x": 88,
+        "y": 192
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "onprem",
+      "zIndex": 30,
+      "data": {
+        "label": "Corporate servers",
+        "icon": {
+          "pack": "generic",
+          "id": "server"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "admins",
+      "type": "icon",
+      "position": {
+        "x": 128,
+        "y": 556
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "zIndex": 30,
+      "data": {
+        "label": "Admins",
+        "icon": {
+          "pack": "azure",
+          "id": "users"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "sub",
+      "type": "container",
+      "position": {
+        "x": 340,
+        "y": 40
+      },
+      "size": {
+        "width": 924,
+        "height": 1024
+      },
+      "zIndex": 0,
+      "data": {
+        "label": "Production subscription",
+        "containerKind": "azure.subscription",
+        "style": {}
+      }
+    },
+    {
+      "id": "rg-hub",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 60
+      },
+      "size": {
+        "width": 368,
+        "height": 752
+      },
+      "parentId": "sub",
+      "zIndex": 1,
+      "data": {
+        "label": "rg-connectivity",
+        "containerKind": "azure.resourceGroup",
+        "style": {}
+      }
+    },
+    {
+      "id": "vnet-hub",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 48
+      },
+      "size": {
+        "width": 320,
+        "height": 680
+      },
+      "parentId": "rg-hub",
+      "zIndex": 2,
+      "data": {
+        "label": "vnet-hub (10.0.0.0/16)",
+        "containerKind": "azure.vnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "snet-gw",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 48
+      },
+      "size": {
+        "width": 272,
+        "height": 140
+      },
+      "parentId": "vnet-hub",
+      "zIndex": 3,
+      "data": {
+        "label": "GatewaySubnet",
+        "containerKind": "azure.subnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "snet-fw",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 204
+      },
+      "size": {
+        "width": 272,
+        "height": 140
+      },
+      "parentId": "vnet-hub",
+      "zIndex": 3,
+      "data": {
+        "label": "AzureFirewallSubnet",
+        "containerKind": "azure.subnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "snet-bastion",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 360
+      },
+      "size": {
+        "width": 272,
+        "height": 140
+      },
+      "parentId": "vnet-hub",
+      "zIndex": 3,
+      "data": {
+        "label": "AzureBastionSubnet",
+        "containerKind": "azure.subnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "snet-shared",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 516
+      },
+      "size": {
+        "width": 272,
+        "height": 140
+      },
+      "parentId": "vnet-hub",
+      "zIndex": 3,
+      "data": {
+        "label": "snet-shared-services",
+        "containerKind": "azure.subnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "vpngw",
+      "type": "icon",
+      "position": {
+        "x": 104,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-gw",
+      "zIndex": 30,
+      "data": {
+        "label": "VPN gateway",
+        "icon": {
+          "pack": "azure",
+          "id": "virtual-network-gateways"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "fw",
+      "type": "icon",
+      "position": {
+        "x": 104,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-fw",
+      "zIndex": 30,
+      "data": {
+        "label": "Azure Firewall",
+        "icon": {
+          "pack": "azure",
+          "id": "firewalls"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "bastion",
+      "type": "icon",
+      "position": {
+        "x": 104,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-bastion",
+      "zIndex": 30,
+      "data": {
+        "label": "Azure Bastion",
+        "icon": {
+          "pack": "azure",
+          "id": "bastions"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "log",
+      "type": "icon",
+      "position": {
+        "x": 50,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-shared",
+      "zIndex": 30,
+      "data": {
+        "label": "Log Analytics",
+        "icon": {
+          "pack": "azure",
+          "id": "log-analytics-workspaces"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "kv",
+      "type": "icon",
+      "position": {
+        "x": 158,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-shared",
+      "zIndex": 30,
+      "data": {
+        "label": "Key Vault",
+        "icon": {
+          "pack": "azure",
+          "id": "key-vaults"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "rg-s1",
+      "type": "container",
+      "position": {
+        "x": 492,
+        "y": 60
+      },
+      "size": {
+        "width": 408,
+        "height": 440
+      },
+      "parentId": "sub",
+      "zIndex": 1,
+      "data": {
+        "label": "rg-workload-prod",
+        "containerKind": "azure.resourceGroup",
+        "style": {}
+      }
+    },
+    {
+      "id": "vnet-s1",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 48
+      },
+      "size": {
+        "width": 360,
+        "height": 368
+      },
+      "parentId": "rg-s1",
+      "zIndex": 2,
+      "data": {
+        "label": "vnet-spoke-prod (10.1.0.0/16)",
+        "containerKind": "azure.vnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "snet-app",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 48
+      },
+      "size": {
+        "width": 312,
+        "height": 140
+      },
+      "parentId": "vnet-s1",
+      "zIndex": 3,
+      "data": {
+        "label": "snet-app",
+        "containerKind": "azure.subnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "vm-web",
+      "type": "icon",
+      "position": {
+        "x": 68,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-app",
+      "zIndex": 30,
+      "data": {
+        "label": "Web VM",
+        "icon": {
+          "pack": "azure",
+          "id": "virtual-machine"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "vm-app",
+      "type": "icon",
+      "position": {
+        "x": 180,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-app",
+      "zIndex": 30,
+      "data": {
+        "label": "App VM",
+        "icon": {
+          "pack": "azure",
+          "id": "virtual-machine"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "snet-data1",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 204
+      },
+      "size": {
+        "width": 312,
+        "height": 140
+      },
+      "parentId": "vnet-s1",
+      "zIndex": 3,
+      "data": {
+        "label": "snet-data",
+        "containerKind": "azure.subnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "sql1",
+      "type": "icon",
+      "position": {
+        "x": 124,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-data1",
+      "zIndex": 30,
+      "data": {
+        "label": "Azure SQL",
+        "icon": {
+          "pack": "azure",
+          "id": "sql-database"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "rg-s2",
+      "type": "container",
+      "position": {
+        "x": 492,
+        "y": 560
+      },
+      "size": {
+        "width": 408,
+        "height": 440
+      },
+      "parentId": "sub",
+      "zIndex": 1,
+      "data": {
+        "label": "rg-workload-aks",
+        "containerKind": "azure.resourceGroup",
+        "style": {}
+      }
+    },
+    {
+      "id": "vnet-s2",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 48
+      },
+      "size": {
+        "width": 360,
+        "height": 368
+      },
+      "parentId": "rg-s2",
+      "zIndex": 2,
+      "data": {
+        "label": "vnet-spoke-aks (10.2.0.0/16)",
+        "containerKind": "azure.vnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "snet-aks",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 48
+      },
+      "size": {
+        "width": 312,
+        "height": 140
+      },
+      "parentId": "vnet-s2",
+      "zIndex": 3,
+      "data": {
+        "label": "snet-aks",
+        "containerKind": "azure.subnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "aks",
+      "type": "icon",
+      "position": {
+        "x": 124,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-aks",
+      "zIndex": 30,
+      "data": {
+        "label": "AKS cluster",
+        "icon": {
+          "pack": "azure",
+          "id": "kubernetes-services"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "snet-data2",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 204
+      },
+      "size": {
+        "width": 312,
+        "height": 140
+      },
+      "parentId": "vnet-s2",
+      "zIndex": 3,
+      "data": {
+        "label": "snet-data",
+        "containerKind": "azure.subnet",
+        "style": {}
+      }
+    },
+    {
+      "id": "sql2",
+      "type": "icon",
+      "position": {
+        "x": 68,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-data2",
+      "zIndex": 30,
+      "data": {
+        "label": "Azure SQL",
+        "icon": {
+          "pack": "azure",
+          "id": "sql-database"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "storage",
+      "type": "icon",
+      "position": {
+        "x": 180,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "snet-data2",
+      "zIndex": 30,
+      "data": {
+        "label": "Storage account",
+        "icon": {
+          "pack": "azure",
+          "id": "storage-accounts"
+        },
+        "style": {}
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-servers-router",
+      "source": "servers",
+      "target": "router",
+      "sourceHandle": "top",
+      "targetHandle": "bottom",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "LAN"
+      }
+    },
+    {
+      "id": "e-vpn",
+      "source": "router",
+      "target": "vpngw",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "arrow",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "IPsec VPN",
+        "labelPosition": 0.34
+      }
+    },
+    {
+      "id": "e-admins-bastion",
+      "source": "admins",
+      "target": "bastion",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "RDP / SSH over TLS",
+        "labelPosition": 0.3
+      }
+    },
+    {
+      "id": "e-peer-1",
+      "source": "vnet-hub",
+      "target": "vnet-s1",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "arrow",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed",
+          "stroke": "#0078D4"
+        },
+        "label": "VNet peering"
+      }
+    },
+    {
+      "id": "e-peer-2",
+      "source": "vnet-hub",
+      "target": "vnet-s2",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "arrow",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed",
+          "stroke": "#0078D4"
+        },
+        "label": "VNet peering"
+      }
+    },
+    {
+      "id": "e-app-sql",
+      "source": "snet-app",
+      "target": "sql1",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "SQL 1433"
+      }
+    },
+    {
+      "id": "e-aks-sql",
+      "source": "snet-aks",
+      "target": "sql2",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "SQL",
+        "labelPosition": 0.6
+      }
+    },
+    {
+      "id": "e-aks-storage",
+      "source": "snet-aks",
+      "target": "storage",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "Private Link",
+        "labelPosition": 0.6
+      }
+    }
+  ]
+}

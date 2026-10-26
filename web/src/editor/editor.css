@@ -1,0 +1,259 @@
+.chartit-editor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
+.chartit-editor .react-flow {
+  --xy-selection-background-color: color-mix(in srgb, var(--accent) 9%, transparent);
+  --xy-selection-border: 1px solid color-mix(in srgb, var(--accent) 80%, transparent);
+  --xy-node-boxshadow-selected: none;
+  --xy-edge-stroke-default: var(--chartit-edge);
+  --xy-connectionline-stroke-default: var(--accent);
+  --xy-minimap-background-color-props: color-mix(in srgb, var(--surface) 92%, transparent);
+  --xy-minimap-node-stroke-width-props: 0;
+}
+
+.chartit-editor .react-flow__node {
+  cursor: default;
+}
+
+.chartit-editor[data-tool='pan'] .react-flow__pane,
+.chartit-editor[data-tool='pan'] .react-flow__node {
+  cursor: grab;
+}
+
+.chartit-editor[data-tool='pan']:active .react-flow__pane {
+  cursor: grabbing;
+}
+
+.chartit-editor[data-tool='text'] .react-flow__pane,
+.chartit-editor[data-tool^='shape:'] .react-flow__pane,
+.chartit-editor[data-tool^='container:'] .react-flow__pane,
+.chartit-editor[data-tool='connector'] .react-flow__pane {
+  cursor: crosshair;
+}
+
+.chartit-editor .react-flow__node.dragging {
+  cursor: grabbing;
+}
+
+.chartit-editor .react-flow__nodesselection-rect {
+  border: 1px dashed color-mix(in srgb, var(--accent) 70%, transparent);
+  border-radius: 4px;
+  background: transparent;
+}
+
+.chartit-editor .react-flow__handle.chartit-handle {
+  width: 8px;
+  height: 8px;
+  min-width: 8px;
+  min-height: 8px;
+  border: 1.5px solid #fff;
+  border-radius: 9999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+  opacity: 0;
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.chartit-editor .react-flow__handle.chartit-handle::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 9999px;
+}
+
+.chartit-editor .chartit-node:hover .chartit-handle,
+.chartit-editor .chartit-node[data-selected='true'] .chartit-handle,
+.chartit-editor[data-tool='connector'] .chartit-handle,
+.chartit-editor[data-connecting='true'] .chartit-handle {
+  opacity: 1;
+}
+
+.chartit-editor[data-readonly='true'] .chartit-handle {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.chartit-editor .react-flow__handle.chartit-handle:hover,
+.chartit-editor .react-flow__handle.chartit-handle.connectingto {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.chartit-editor .react-flow__handle-top.chartit-handle:hover,
+.chartit-editor .react-flow__handle-top.chartit-handle.connectingto {
+  transform: translate(-50%, -50%) scale(1.3);
+}
+
+.chartit-editor .react-flow__handle-bottom.chartit-handle:hover,
+.chartit-editor .react-flow__handle-bottom.chartit-handle.connectingto {
+  transform: translate(-50%, 50%) scale(1.3);
+}
+
+.chartit-editor .react-flow__handle-left.chartit-handle:hover,
+.chartit-editor .react-flow__handle-left.chartit-handle.connectingto {
+  transform: translate(-50%, -50%) scale(1.3);
+}
+
+.chartit-editor .react-flow__handle-right.chartit-handle:hover,
+.chartit-editor .react-flow__handle-right.chartit-handle.connectingto {
+  transform: translate(50%, -50%) scale(1.3);
+}
+
+.chartit-editor .react-flow__resize-control.handle.chartit-resize-handle {
+  width: 7px;
+  height: 7px;
+  border: 1.5px solid var(--accent);
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.2);
+  transition: transform 100ms ease;
+}
+
+.chartit-editor .react-flow__resize-control.handle.chartit-resize-handle:hover {
+  background: var(--accent);
+}
+
+.chartit-editor .react-flow__resize-control.line.chartit-resize-line {
+  border-color: transparent;
+}
+
+.chartit-editor .react-flow__minimap {
+  overflow: hidden;
+  margin-right: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-raised);
+}
+
+.chartit-editor .react-flow__attribution {
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 9px;
+  opacity: 0.6;
+}
+
+.chartit-editor .chartit-edge-halo {
+  stroke: var(--accent);
+  stroke-opacity: 0;
+  transition: stroke-opacity 120ms ease;
+}
+
+.chartit-editor .react-flow__edge:hover .chartit-edge-halo {
+  stroke-opacity: 0.22;
+}
+
+.chartit-editor .chartit-edge[data-selected='true'] .chartit-edge-halo {
+  stroke-opacity: 0.3;
+}
+
+.chartit-editor .chartit-edge-label {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  max-width: 240px;
+  padding: 1px 9px;
+  border: 1px solid color-mix(in srgb, var(--chartit-ink) 16%, transparent);
+  border-radius: 9999px;
+  font-family: inherit;
+  line-height: 1.35;
+  white-space: nowrap;
+  pointer-events: all;
+  cursor: grab;
+  user-select: none;
+}
+
+.chartit-editor .chartit-edge-label[data-selected='true'] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.chartit-editor .chartit-edge-label[data-dragging='true'] {
+  cursor: grabbing;
+}
+
+.chartit-editor .chartit-edge-label-input {
+  min-width: 4ch;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  user-select: text;
+}
+
+.chartit-editor .chartit-segment-handle {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1.5px solid var(--accent);
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.2);
+  pointer-events: all;
+  touch-action: none;
+}
+
+.chartit-editor .chartit-segment-handle[data-axis='x'] {
+  width: 16px;
+  height: 7px;
+  cursor: ns-resize;
+}
+
+.chartit-editor .chartit-segment-handle[data-axis='y'] {
+  width: 7px;
+  height: 16px;
+  cursor: ew-resize;
+}
+
+.chartit-editor .chartit-segment-handle:hover {
+  background: var(--accent);
+}
+
+.chartit-editor .chartit-edge-action {
+  position: absolute;
+  padding: 3px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 9999px;
+  background: var(--surface);
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: all;
+  cursor: pointer;
+  box-shadow: var(--shadow-raised);
+}
+
+.chartit-editor .chartit-edge-action:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.chartit-editor .react-flow__edgeupdater {
+  fill: transparent;
+  stroke: transparent;
+}
+
+.chartit-editor .react-flow__resize-control {
+  z-index: 5;
+  pointer-events: all;
+}
+
+.chartit-editor .chartit-icon-label > div {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}

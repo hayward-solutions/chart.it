@@ -1,0 +1,30 @@
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      root: web
+      glob: "**/*.{ts,tsx,js,json,md,css}"
+      run: npx prettier --check {staged_files}
+    eslint:
+      root: web
+      glob: "**/*.{ts,tsx}"
+      run: npx eslint {staged_files}
+    go-fmt:
+      glob: "**/*.go"
+      run: test -z "$(gofmt -l {staged_files})"
+    go-vet:
+      glob: "**/*.go"
+      run: go vet ./cmd/... ./internal/... ./tools/...
+    go-lint:
+      glob: "**/*.go"
+      run: golangci-lint run --fast-only ./cmd/... ./internal/... ./tools/...
+
+format:
+  commands:
+    prettier:
+      root: web
+      glob: "**/*.{ts,tsx,js,json,md,css}"
+      run: npx prettier --write {staged_files}
+    go-fmt:
+      glob: "**/*.go"
+      run: gofmt -w {staged_files}

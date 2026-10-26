@@ -1,0 +1,9 @@
+persistence:
+  enabled: false
+serviceAccount:
+  create: false
+nameOverride: diagrams
+podAnnotations:
+  example.com/scrape: "false"
+nodeSelector:
+  kubernetes.io/arch: arm64

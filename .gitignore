@@ -1,0 +1,44 @@
+# Go
+/bin/
+/dist/
+*.test
+*.out
+coverage.*
+
+# Node
+node_modules/
+web/dist/
+internal/ui/dist/*
+!internal/ui/dist/.keep
+web/.vite/
+web/coverage/
+e2e/test-results/
+e2e/playwright-report/
+e2e/blob-report/
+
+# Runtime data
+/data/
+*.db
+*.db-wal
+*.db-shm
+
+# Icon tool scratch
+/tools/icons/.cache/
+
+# Helm
+.helm-packages/
+charts/*/charts/
+charts/*/Chart.lock
+
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+.env
+.env.*
+!.env.example
+
+# Agent browser scratch
+.playwright-mcp/

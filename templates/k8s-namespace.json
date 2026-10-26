@@ -1,0 +1,693 @@
+{
+  "schemaVersion": 1,
+  "title": "Kubernetes namespace",
+  "settings": {
+    "background": "#ffffff",
+    "grid": "dots",
+    "snap": true,
+    "gridSize": 20,
+    "theme": "system"
+  },
+  "viewport": {
+    "x": -1,
+    "y": 19,
+    "zoom": 0.69
+  },
+  "nodes": [
+    {
+      "id": "users",
+      "type": "icon",
+      "position": {
+        "x": 60,
+        "y": 323
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "zIndex": 30,
+      "data": {
+        "label": "Users",
+        "icon": {
+          "pack": "k8s",
+          "id": "user"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "cluster",
+      "type": "container",
+      "position": {
+        "x": 170,
+        "y": 30
+      },
+      "size": {
+        "width": 1504,
+        "height": 762
+      },
+      "zIndex": 0,
+      "data": {
+        "label": "Kubernetes cluster",
+        "containerKind": "k8s.cluster",
+        "style": {}
+      }
+    },
+    {
+      "id": "ns",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 48
+      },
+      "size": {
+        "width": 1456,
+        "height": 690
+      },
+      "parentId": "cluster",
+      "zIndex": 1,
+      "data": {
+        "label": "namespace: production",
+        "containerKind": "k8s.namespace",
+        "style": {}
+      }
+    },
+    {
+      "id": "ingress",
+      "type": "icon",
+      "position": {
+        "x": 104,
+        "y": 245
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "Ingress\nweb.example.com",
+        "icon": {
+          "pack": "k8s",
+          "id": "ingress"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "svc-web",
+      "type": "icon",
+      "position": {
+        "x": 334,
+        "y": 120
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "web-svc",
+        "icon": {
+          "pack": "k8s",
+          "id": "service"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "svc-api",
+      "type": "icon",
+      "position": {
+        "x": 334,
+        "y": 370
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "api-svc",
+        "icon": {
+          "pack": "k8s",
+          "id": "service"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "dep-web",
+      "type": "icon",
+      "position": {
+        "x": 564,
+        "y": 120
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "web",
+        "icon": {
+          "pack": "k8s",
+          "id": "deployment"
+        },
+        "style": {
+          "labelPosition": "top"
+        }
+      }
+    },
+    {
+      "id": "dep-api",
+      "type": "icon",
+      "position": {
+        "x": 564,
+        "y": 370
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "api",
+        "icon": {
+          "pack": "k8s",
+          "id": "deployment"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "hpa",
+      "type": "icon",
+      "position": {
+        "x": 564,
+        "y": 245
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "HPA\nCPU 70%",
+        "icon": {
+          "pack": "k8s",
+          "id": "horizontal-pod-autoscaler"
+        },
+        "style": {
+          "labelPosition": "right"
+        }
+      }
+    },
+    {
+      "id": "rs-web",
+      "type": "container",
+      "position": {
+        "x": 786,
+        "y": 72
+      },
+      "size": {
+        "width": 312,
+        "height": 160
+      },
+      "parentId": "ns",
+      "zIndex": 2,
+      "data": {
+        "label": "ReplicaSet: web (3 pods)",
+        "containerKind": "generic",
+        "style": {
+          "stroke": "#326CE5",
+          "strokeStyle": "dashed"
+        },
+        "icon": {
+          "pack": "k8s",
+          "id": "replica-set"
+        }
+      }
+    },
+    {
+      "id": "web-pod-1",
+      "type": "icon",
+      "position": {
+        "x": 36,
+        "y": 52
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "rs-web",
+      "zIndex": 30,
+      "data": {
+        "label": "web-6d9f-a1",
+        "icon": {
+          "pack": "k8s",
+          "id": "pod"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "web-pod-2",
+      "type": "icon",
+      "position": {
+        "x": 124,
+        "y": 52
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "rs-web",
+      "zIndex": 30,
+      "data": {
+        "label": "web-6d9f-b2",
+        "icon": {
+          "pack": "k8s",
+          "id": "pod"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "web-pod-3",
+      "type": "icon",
+      "position": {
+        "x": 212,
+        "y": 52
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "rs-web",
+      "zIndex": 30,
+      "data": {
+        "label": "web-6d9f-c3",
+        "icon": {
+          "pack": "k8s",
+          "id": "pod"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "rs-api",
+      "type": "container",
+      "position": {
+        "x": 786,
+        "y": 322
+      },
+      "size": {
+        "width": 312,
+        "height": 160
+      },
+      "parentId": "ns",
+      "zIndex": 2,
+      "data": {
+        "label": "ReplicaSet: api (3 pods)",
+        "containerKind": "generic",
+        "style": {
+          "stroke": "#326CE5",
+          "strokeStyle": "dashed"
+        },
+        "icon": {
+          "pack": "k8s",
+          "id": "replica-set"
+        }
+      }
+    },
+    {
+      "id": "api-pod-1",
+      "type": "icon",
+      "position": {
+        "x": 36,
+        "y": 52
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "rs-api",
+      "zIndex": 30,
+      "data": {
+        "label": "api-6d9f-a1",
+        "icon": {
+          "pack": "k8s",
+          "id": "pod"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "api-pod-2",
+      "type": "icon",
+      "position": {
+        "x": 124,
+        "y": 52
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "rs-api",
+      "zIndex": 30,
+      "data": {
+        "label": "api-6d9f-b2",
+        "icon": {
+          "pack": "k8s",
+          "id": "pod"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "api-pod-3",
+      "type": "icon",
+      "position": {
+        "x": 212,
+        "y": 52
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "rs-api",
+      "zIndex": 30,
+      "data": {
+        "label": "api-6d9f-c3",
+        "icon": {
+          "pack": "k8s",
+          "id": "pod"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "pvc",
+      "type": "icon",
+      "position": {
+        "x": 1214,
+        "y": 370
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "data-pvc",
+        "icon": {
+          "pack": "k8s",
+          "id": "persistent-volume-claim"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "pv",
+      "type": "icon",
+      "position": {
+        "x": 1354,
+        "y": 370
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "pv-0001",
+        "icon": {
+          "pack": "k8s",
+          "id": "persistent-volume"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "cm",
+      "type": "icon",
+      "position": {
+        "x": 824,
+        "y": 562
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "api-config",
+        "icon": {
+          "pack": "k8s",
+          "id": "config-map"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "secret",
+      "type": "icon",
+      "position": {
+        "x": 996,
+        "y": 562
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "ns",
+      "zIndex": 30,
+      "data": {
+        "label": "api-secrets",
+        "icon": {
+          "pack": "k8s",
+          "id": "secret"
+        },
+        "style": {}
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-users-ingress",
+      "source": "users",
+      "target": "ingress",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "HTTPS"
+      }
+    },
+    {
+      "id": "e-ingress-web",
+      "source": "ingress",
+      "target": "svc-web",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "/",
+        "labelPosition": 0.8
+      }
+    },
+    {
+      "id": "e-ingress-api",
+      "source": "ingress",
+      "target": "svc-api",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "/api",
+        "labelPosition": 0.8
+      }
+    },
+    {
+      "id": "e-svc-dep-web",
+      "source": "svc-web",
+      "target": "dep-web",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "selector"
+      }
+    },
+    {
+      "id": "e-svc-dep-api",
+      "source": "svc-api",
+      "target": "dep-api",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "selector"
+      }
+    },
+    {
+      "id": "e-dep-rs-web",
+      "source": "dep-web",
+      "target": "rs-web",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "manages"
+      }
+    },
+    {
+      "id": "e-dep-rs-api",
+      "source": "dep-api",
+      "target": "rs-api",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "manages"
+      }
+    },
+    {
+      "id": "e-hpa-web",
+      "source": "hpa",
+      "target": "dep-web",
+      "sourceHandle": "top",
+      "targetHandle": "bottom",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        }
+      }
+    },
+    {
+      "id": "e-hpa-api",
+      "source": "hpa",
+      "target": "dep-api",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        }
+      }
+    },
+    {
+      "id": "e-rs-pvc",
+      "source": "rs-api",
+      "target": "pvc",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "mounts"
+      }
+    },
+    {
+      "id": "e-pvc-pv",
+      "source": "pvc",
+      "target": "pv",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "bound"
+      }
+    },
+    {
+      "id": "e-rs-cm",
+      "source": "rs-api",
+      "target": "cm",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "envFrom",
+        "labelPosition": 0.6
+      }
+    },
+    {
+      "id": "e-rs-secret",
+      "source": "rs-api",
+      "target": "secret",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "volume",
+        "labelPosition": 0.6
+      }
+    }
+  ]
+}

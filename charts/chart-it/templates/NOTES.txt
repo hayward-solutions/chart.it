@@ -1,0 +1,28 @@
+Chart.it {{ .Chart.AppVersion }} is deployed as {{ include "chart-it.fullname" . }}.
+
+{{- if .Values.ingress.enabled }}
+
+It is exposed through the {{ .Values.ingress.className | default "default" }} ingress class.
+{{- else }}
+
+Reach it locally with:
+
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "chart-it.fullname" . }} 8080:{{ .Values.service.port }}
+
+and open http://127.0.0.1:8080.
+{{- end }}
+
+Data lives in SQLite under /data, so the deployment is pinned to one replica with the Recreate strategy.
+{{- if not .Values.persistence.enabled }}
+
+WARNING: persistence is disabled, so diagrams are lost whenever the pod restarts.
+{{- end }}
+{{- if not .Values.existingSecret }}
+
+WARNING: existingSecret is not set. CHARTIT_SESSION_SECRET (32+ bytes) and CHARTIT_OIDC_CLIENT_SECRET
+must reach the pod through a Secret, or through env, before this release is usable in production.
+{{- end }}
+{{- if not .Values.config.baseUrl }}
+
+WARNING: config.baseUrl is empty, so the OIDC redirect and share links fall back to http://localhost:8080.
+{{- end }}

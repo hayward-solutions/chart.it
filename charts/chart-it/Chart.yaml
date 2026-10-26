@@ -1,0 +1,9 @@
+apiVersion: v2
+name: chart-it
+description: Self-hosted architecture diagramming tool
+type: application
+version: 0.1.0
+appVersion: "main"
+home: https://github.com/hayward-solutions/chart.it
+sources:
+  - https://github.com/hayward-solutions/chart.it

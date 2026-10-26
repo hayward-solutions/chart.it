@@ -1,0 +1,32 @@
+[
+  {
+    "key": "aws-three-tier",
+    "title": "AWS three-tier web app",
+    "description": "Load balancer, web and app tiers and a database across two availability zones.",
+    "pack": "aws"
+  },
+  {
+    "key": "aws-eks",
+    "title": "AWS EKS cluster",
+    "description": "EKS cluster in a VPC with managed node groups, ingress and supporting services.",
+    "pack": "aws"
+  },
+  {
+    "key": "azure-hub-spoke",
+    "title": "Azure hub and spoke network",
+    "description": "Hub virtual network with firewall and shared services peered to workload spokes.",
+    "pack": "azure"
+  },
+  {
+    "key": "gcp-gke",
+    "title": "GCP GKE cluster",
+    "description": "Regional GKE cluster in a custom VPC with load balancing and managed data services.",
+    "pack": "gcp"
+  },
+  {
+    "key": "k8s-namespace",
+    "title": "Kubernetes namespace",
+    "description": "Namespace with an ingress, services, deployments and persistent storage.",
+    "pack": "k8s"
+  }
+]

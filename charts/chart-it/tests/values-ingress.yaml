@@ -1,0 +1,24 @@
+image:
+  tag: v0.1.0
+config:
+  baseUrl: https://chart-it.example.com
+  logLevel: debug
+  oidc:
+    issuer: https://issuer.example.com
+    clientId: example-client-id
+existingSecret: chart-it-secrets
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    example.com/first: "one"
+    example.com/second: "two"
+  hosts:
+    - host: chart-it.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: chart-it-tls
+      hosts:
+        - chart-it.example.com

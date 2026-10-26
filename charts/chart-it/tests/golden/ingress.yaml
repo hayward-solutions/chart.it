@@ -1,0 +1,190 @@
+---
+# Source: chart-it/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: chart-it
+  labels:
+    helm.sh/chart: chart-it-0.1.0
+    app.kubernetes.io/name: chart-it
+    app.kubernetes.io/instance: chart-it
+    app.kubernetes.io/version: "main"
+    app.kubernetes.io/managed-by: Helm
+automountServiceAccountToken: false
+---
+# Source: chart-it/templates/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chart-it
+  labels:
+    helm.sh/chart: chart-it-0.1.0
+    app.kubernetes.io/name: chart-it
+    app.kubernetes.io/instance: chart-it
+    app.kubernetes.io/version: "main"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: "2Gi"
+---
+# Source: chart-it/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: chart-it
+  labels:
+    helm.sh/chart: chart-it-0.1.0
+    app.kubernetes.io/name: chart-it
+    app.kubernetes.io/instance: chart-it
+    app.kubernetes.io/version: "main"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: chart-it
+    app.kubernetes.io/instance: chart-it
+---
+# Source: chart-it/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chart-it
+  labels:
+    helm.sh/chart: chart-it-0.1.0
+    app.kubernetes.io/name: chart-it
+    app.kubernetes.io/instance: chart-it
+    app.kubernetes.io/version: "main"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: chart-it
+      app.kubernetes.io/instance: chart-it
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: chart-it
+        app.kubernetes.io/instance: chart-it
+    spec:
+      serviceAccountName: chart-it
+      automountServiceAccountToken: false
+      securityContext:
+        fsGroup: 65532
+        runAsGroup: 65532
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: chart-it
+          image: "ghcr.io/hayward-solutions/chart.it:v0.1.0"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: CHARTIT_ADDR
+              value: ":8080"
+            - name: CHARTIT_DATA_DIR
+              value: "/data"
+            - name: CHARTIT_LOG_LEVEL
+              value: "debug"
+            - name: CHARTIT_BASE_URL
+              value: "https://chart-it.example.com"
+            - name: CHARTIT_OIDC_ISSUER
+              value: "https://issuer.example.com"
+            - name: CHARTIT_OIDC_CLIENT_ID
+              value: "example-client-id"
+            - name: CHARTIT_OIDC_SCOPES
+              value: "openid profile email"
+          envFrom:
+            - secretRef:
+                name: chart-it-secrets
+          startupProbe:
+            failureThreshold: 30
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 2
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 2
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 2
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: chart-it
+        - name: tmp
+          emptyDir:
+            sizeLimit: "64Mi"
+---
+# Source: chart-it/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: chart-it
+  labels:
+    helm.sh/chart: chart-it-0.1.0
+    app.kubernetes.io/name: chart-it
+    app.kubernetes.io/instance: chart-it
+    app.kubernetes.io/version: "main"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    example.com/first: one
+    example.com/second: two
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+      - chart-it.example.com
+      secretName: chart-it-tls
+  rules:
+    - host: "chart-it.example.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chart-it
+                port:
+                  name: http

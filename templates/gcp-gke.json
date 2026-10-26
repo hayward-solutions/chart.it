@@ -1,0 +1,669 @@
+{
+  "schemaVersion": 1,
+  "title": "GCP GKE cluster",
+  "settings": {
+    "background": "#ffffff",
+    "grid": "dots",
+    "snap": true,
+    "gridSize": 20,
+    "theme": "system"
+  },
+  "viewport": {
+    "x": -3,
+    "y": 18,
+    "zoom": 0.72
+  },
+  "nodes": [
+    {
+      "id": "users",
+      "type": "icon",
+      "position": {
+        "x": 60,
+        "y": 455
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "zIndex": 30,
+      "data": {
+        "label": "Users",
+        "icon": {
+          "pack": "generic",
+          "id": "laptop"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "project",
+      "type": "container",
+      "position": {
+        "x": 190,
+        "y": 30
+      },
+      "size": {
+        "width": 1198,
+        "height": 950
+      },
+      "zIndex": 0,
+      "data": {
+        "label": "my-project-prod",
+        "containerKind": "gcp.project",
+        "style": {}
+      }
+    },
+    {
+      "id": "armor",
+      "type": "icon",
+      "position": {
+        "x": 68,
+        "y": 270
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "project",
+      "zIndex": 30,
+      "data": {
+        "label": "Cloud Armor",
+        "icon": {
+          "pack": "gcp",
+          "id": "cloud-armor"
+        },
+        "style": {
+          "labelPosition": "top"
+        }
+      }
+    },
+    {
+      "id": "lb",
+      "type": "icon",
+      "position": {
+        "x": 68,
+        "y": 425
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "project",
+      "zIndex": 30,
+      "data": {
+        "label": "Cloud Load\nBalancing",
+        "icon": {
+          "pack": "gcp",
+          "id": "cloud-load-balancing"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "vpc",
+      "type": "container",
+      "position": {
+        "x": 210,
+        "y": 70
+      },
+      "size": {
+        "width": 956,
+        "height": 854
+      },
+      "parentId": "project",
+      "zIndex": 1,
+      "data": {
+        "label": "vpc-prod (custom mode)",
+        "containerKind": "gcp.vpc",
+        "style": {}
+      }
+    },
+    {
+      "id": "region",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 48
+      },
+      "size": {
+        "width": 908,
+        "height": 782
+      },
+      "parentId": "vpc",
+      "zIndex": 2,
+      "data": {
+        "label": "europe-west2 (London)",
+        "containerKind": "gcp.region",
+        "style": {}
+      }
+    },
+    {
+      "id": "gke",
+      "type": "container",
+      "position": {
+        "x": 36,
+        "y": 52
+      },
+      "size": {
+        "width": 492,
+        "height": 550
+      },
+      "parentId": "region",
+      "zIndex": 3,
+      "data": {
+        "label": "GKE regional cluster",
+        "containerKind": "generic",
+        "style": {
+          "stroke": "#4285F4"
+        },
+        "icon": {
+          "pack": "gcp",
+          "id": "gke"
+        }
+      }
+    },
+    {
+      "id": "ingress",
+      "type": "icon",
+      "position": {
+        "x": 36,
+        "y": 255
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "gke",
+      "zIndex": 30,
+      "data": {
+        "label": "Ingress",
+        "icon": {
+          "pack": "k8s",
+          "id": "ingress"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "pool-web",
+      "type": "container",
+      "position": {
+        "x": 168,
+        "y": 48
+      },
+      "size": {
+        "width": 300,
+        "height": 146
+      },
+      "parentId": "gke",
+      "zIndex": 4,
+      "data": {
+        "label": "Node pool: web",
+        "containerKind": "generic",
+        "style": {
+          "stroke": "#4285F4",
+          "strokeStyle": "dashed"
+        },
+        "icon": {
+          "pack": "gcp",
+          "id": "compute-engine"
+        }
+      }
+    },
+    {
+      "id": "pool-web-1",
+      "type": "icon",
+      "position": {
+        "x": 58,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pool-web",
+      "zIndex": 30,
+      "data": {
+        "label": "Node",
+        "icon": {
+          "pack": "gcp",
+          "id": "compute-engine"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "pool-web-2",
+      "type": "icon",
+      "position": {
+        "x": 178,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pool-web",
+      "zIndex": 30,
+      "data": {
+        "label": "Node",
+        "icon": {
+          "pack": "gcp",
+          "id": "compute-engine"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "pool-api",
+      "type": "container",
+      "position": {
+        "x": 168,
+        "y": 214
+      },
+      "size": {
+        "width": 300,
+        "height": 146
+      },
+      "parentId": "gke",
+      "zIndex": 4,
+      "data": {
+        "label": "Node pool: api",
+        "containerKind": "generic",
+        "style": {
+          "stroke": "#4285F4",
+          "strokeStyle": "dashed"
+        },
+        "icon": {
+          "pack": "gcp",
+          "id": "compute-engine"
+        }
+      }
+    },
+    {
+      "id": "pool-api-1",
+      "type": "icon",
+      "position": {
+        "x": 58,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pool-api",
+      "zIndex": 30,
+      "data": {
+        "label": "Node",
+        "icon": {
+          "pack": "gcp",
+          "id": "compute-engine"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "pool-api-2",
+      "type": "icon",
+      "position": {
+        "x": 178,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pool-api",
+      "zIndex": 30,
+      "data": {
+        "label": "Node",
+        "icon": {
+          "pack": "gcp",
+          "id": "compute-engine"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "pool-batch",
+      "type": "container",
+      "position": {
+        "x": 168,
+        "y": 380
+      },
+      "size": {
+        "width": 300,
+        "height": 146
+      },
+      "parentId": "gke",
+      "zIndex": 4,
+      "data": {
+        "label": "Node pool: batch",
+        "containerKind": "generic",
+        "style": {
+          "stroke": "#4285F4",
+          "strokeStyle": "dashed"
+        },
+        "icon": {
+          "pack": "gcp",
+          "id": "compute-engine"
+        }
+      }
+    },
+    {
+      "id": "pool-batch-1",
+      "type": "icon",
+      "position": {
+        "x": 58,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pool-batch",
+      "zIndex": 30,
+      "data": {
+        "label": "Node",
+        "icon": {
+          "pack": "gcp",
+          "id": "compute-engine"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "pool-batch-2",
+      "type": "icon",
+      "position": {
+        "x": 178,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pool-batch",
+      "zIndex": 30,
+      "data": {
+        "label": "Node",
+        "icon": {
+          "pack": "gcp",
+          "id": "compute-engine"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "redis",
+      "type": "icon",
+      "position": {
+        "x": 674,
+        "y": 141
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "region",
+      "zIndex": 30,
+      "data": {
+        "label": "Memorystore\nfor Redis",
+        "icon": {
+          "pack": "gcp",
+          "id": "memorystore"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "sql",
+      "type": "icon",
+      "position": {
+        "x": 674,
+        "y": 307
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "region",
+      "zIndex": 30,
+      "data": {
+        "label": "Cloud SQL\n(HA primary)",
+        "icon": {
+          "pack": "gcp",
+          "id": "cloud-sql"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "sql-replica",
+      "type": "icon",
+      "position": {
+        "x": 814,
+        "y": 307
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "region",
+      "zIndex": 30,
+      "data": {
+        "label": "Cloud SQL\nread replica",
+        "icon": {
+          "pack": "gcp",
+          "id": "cloud-sql"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "gcs",
+      "type": "icon",
+      "position": {
+        "x": 674,
+        "y": 473
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "region",
+      "zIndex": 30,
+      "data": {
+        "label": "Cloud Storage",
+        "icon": {
+          "pack": "gcp",
+          "id": "cloud-storage"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "ar",
+      "type": "icon",
+      "position": {
+        "x": 250,
+        "y": 662
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "region",
+      "zIndex": 30,
+      "data": {
+        "label": "Artifact Registry",
+        "icon": {
+          "pack": "gcp",
+          "id": "artifact-registry"
+        },
+        "style": {}
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-users-lb",
+      "source": "users",
+      "target": "lb",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "HTTPS",
+        "labelPosition": 0.5
+      }
+    },
+    {
+      "id": "e-armor-lb",
+      "source": "armor",
+      "target": "lb",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "security policy"
+      }
+    },
+    {
+      "id": "e-lb-ingress",
+      "source": "lb",
+      "target": "ingress",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "HTTPS",
+        "labelPosition": 0.35
+      }
+    },
+    {
+      "id": "e-ingress-web",
+      "source": "ingress",
+      "target": "pool-web",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "/",
+        "labelPosition": 0.75
+      }
+    },
+    {
+      "id": "e-ingress-api",
+      "source": "ingress",
+      "target": "pool-api",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "/api"
+      }
+    },
+    {
+      "id": "e-web-redis",
+      "source": "pool-web",
+      "target": "redis",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "6379"
+      }
+    },
+    {
+      "id": "e-api-sql",
+      "source": "pool-api",
+      "target": "sql",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "5432 (private IP)"
+      }
+    },
+    {
+      "id": "e-batch-gcs",
+      "source": "pool-batch",
+      "target": "gcs",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "HTTPS"
+      }
+    },
+    {
+      "id": "e-sql-replica",
+      "source": "sql",
+      "target": "sql-replica",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "replication"
+      }
+    },
+    {
+      "id": "e-ar-gke",
+      "source": "ar",
+      "target": "gke",
+      "sourceHandle": "top",
+      "targetHandle": "bottom",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "image pull"
+      }
+    }
+  ]
+}

@@ -1,0 +1,829 @@
+{
+  "schemaVersion": 1,
+  "title": "AWS three-tier web app",
+  "settings": {
+    "background": "#ffffff",
+    "grid": "dots",
+    "snap": true,
+    "gridSize": 20,
+    "theme": "system"
+  },
+  "viewport": {
+    "x": 4,
+    "y": 28,
+    "zoom": 0.6
+  },
+  "nodes": [
+    {
+      "id": "users",
+      "type": "icon",
+      "position": {
+        "x": 60,
+        "y": 110
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "zIndex": 30,
+      "data": {
+        "label": "Users",
+        "icon": {
+          "pack": "aws",
+          "id": "users"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "cloud",
+      "type": "container",
+      "position": {
+        "x": 180,
+        "y": 20
+      },
+      "size": {
+        "width": 1200,
+        "height": 1128
+      },
+      "zIndex": 0,
+      "data": {
+        "label": "AWS Cloud",
+        "containerKind": "aws.cloud",
+        "style": {}
+      }
+    },
+    {
+      "id": "r53",
+      "type": "icon",
+      "position": {
+        "x": 218,
+        "y": 90
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "cloud",
+      "zIndex": 30,
+      "data": {
+        "label": "Route 53",
+        "icon": {
+          "pack": "aws",
+          "id": "route-53"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "cf",
+      "type": "icon",
+      "position": {
+        "x": 538,
+        "y": 90
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "cloud",
+      "zIndex": 30,
+      "data": {
+        "label": "CloudFront",
+        "icon": {
+          "pack": "aws",
+          "id": "cloudfront"
+        },
+        "style": {
+          "labelPosition": "top"
+        }
+      }
+    },
+    {
+      "id": "s3",
+      "type": "icon",
+      "position": {
+        "x": 858,
+        "y": 90
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "cloud",
+      "zIndex": 30,
+      "data": {
+        "label": "S3 static assets",
+        "icon": {
+          "pack": "aws",
+          "id": "s3"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "region",
+      "type": "container",
+      "position": {
+        "x": 40,
+        "y": 212
+      },
+      "size": {
+        "width": 1120,
+        "height": 888
+      },
+      "parentId": "cloud",
+      "zIndex": 1,
+      "data": {
+        "label": "Region eu-west-1",
+        "containerKind": "aws.region",
+        "style": {}
+      }
+    },
+    {
+      "id": "vpc",
+      "type": "container",
+      "position": {
+        "x": 40,
+        "y": 56
+      },
+      "size": {
+        "width": 1040,
+        "height": 808
+      },
+      "parentId": "region",
+      "zIndex": 2,
+      "data": {
+        "label": "VPC 10.0.0.0/16",
+        "containerKind": "aws.vpc",
+        "style": {}
+      }
+    },
+    {
+      "id": "igw",
+      "type": "icon",
+      "position": {
+        "x": 458,
+        "y": 52
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "vpc",
+      "zIndex": 30,
+      "data": {
+        "label": "Internet\ngateway",
+        "icon": {
+          "pack": "aws",
+          "id": "vpc-internet-gateway"
+        },
+        "style": {
+          "labelPosition": "right"
+        }
+      }
+    },
+    {
+      "id": "az-a",
+      "type": "container",
+      "position": {
+        "x": 24,
+        "y": 168
+      },
+      "size": {
+        "width": 480,
+        "height": 616
+      },
+      "parentId": "vpc",
+      "zIndex": 3,
+      "data": {
+        "label": "Availability Zone A",
+        "containerKind": "aws.availabilityZone",
+        "style": {}
+      }
+    },
+    {
+      "id": "pub-a",
+      "type": "container",
+      "position": {
+        "x": 20,
+        "y": 44
+      },
+      "size": {
+        "width": 440,
+        "height": 164
+      },
+      "parentId": "az-a",
+      "zIndex": 4,
+      "data": {
+        "label": "Public subnet",
+        "containerKind": "aws.subnet.public",
+        "style": {}
+      }
+    },
+    {
+      "id": "alb-a",
+      "type": "icon",
+      "position": {
+        "x": 158,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pub-a",
+      "zIndex": 30,
+      "data": {
+        "label": "Application\nLoad Balancer",
+        "icon": {
+          "pack": "aws",
+          "id": "elb-application-load-balancer"
+        },
+        "style": {
+          "labelPosition": "right"
+        }
+      }
+    },
+    {
+      "id": "nat-a",
+      "type": "icon",
+      "position": {
+        "x": 358,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pub-a",
+      "zIndex": 30,
+      "data": {
+        "label": "NAT gateway",
+        "icon": {
+          "pack": "aws",
+          "id": "vpc-nat-gateway"
+        },
+        "style": {
+          "labelPosition": "top"
+        }
+      }
+    },
+    {
+      "id": "app-a",
+      "type": "container",
+      "position": {
+        "x": 20,
+        "y": 228
+      },
+      "size": {
+        "width": 440,
+        "height": 208
+      },
+      "parentId": "az-a",
+      "zIndex": 4,
+      "data": {
+        "label": "Private subnet (app)",
+        "containerKind": "aws.subnet.private",
+        "style": {}
+      }
+    },
+    {
+      "id": "asg-a",
+      "type": "container",
+      "position": {
+        "x": 60,
+        "y": 44
+      },
+      "size": {
+        "width": 260,
+        "height": 148
+      },
+      "parentId": "app-a",
+      "zIndex": 5,
+      "data": {
+        "label": "Auto Scaling group",
+        "containerKind": "aws.autoScaling",
+        "style": {}
+      }
+    },
+    {
+      "id": "ec2-a-1",
+      "type": "icon",
+      "position": {
+        "x": 33,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "asg-a",
+      "zIndex": 30,
+      "data": {
+        "label": "App server",
+        "icon": {
+          "pack": "aws",
+          "id": "ec2"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "ec2-a-2",
+      "type": "icon",
+      "position": {
+        "x": 163,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "asg-a",
+      "zIndex": 30,
+      "data": {
+        "label": "App server",
+        "icon": {
+          "pack": "aws",
+          "id": "ec2"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "data-a",
+      "type": "container",
+      "position": {
+        "x": 20,
+        "y": 456
+      },
+      "size": {
+        "width": 440,
+        "height": 164
+      },
+      "parentId": "az-a",
+      "zIndex": 4,
+      "data": {
+        "label": "Private subnet (data)",
+        "containerKind": "aws.subnet.private",
+        "style": {}
+      }
+    },
+    {
+      "id": "rds-a",
+      "type": "icon",
+      "position": {
+        "x": 158,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "data-a",
+      "zIndex": 30,
+      "data": {
+        "label": "RDS primary",
+        "icon": {
+          "pack": "aws",
+          "id": "rds"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "az-b",
+      "type": "container",
+      "position": {
+        "x": 536,
+        "y": 168
+      },
+      "size": {
+        "width": 480,
+        "height": 616
+      },
+      "parentId": "vpc",
+      "zIndex": 3,
+      "data": {
+        "label": "Availability Zone B",
+        "containerKind": "aws.availabilityZone",
+        "style": {}
+      }
+    },
+    {
+      "id": "pub-b",
+      "type": "container",
+      "position": {
+        "x": 20,
+        "y": 44
+      },
+      "size": {
+        "width": 440,
+        "height": 164
+      },
+      "parentId": "az-b",
+      "zIndex": 4,
+      "data": {
+        "label": "Public subnet",
+        "containerKind": "aws.subnet.public",
+        "style": {}
+      }
+    },
+    {
+      "id": "alb-b",
+      "type": "icon",
+      "position": {
+        "x": 158,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pub-b",
+      "zIndex": 30,
+      "data": {
+        "label": "Application\nLoad Balancer",
+        "icon": {
+          "pack": "aws",
+          "id": "elb-application-load-balancer"
+        },
+        "style": {
+          "labelPosition": "right"
+        }
+      }
+    },
+    {
+      "id": "nat-b",
+      "type": "icon",
+      "position": {
+        "x": 358,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "pub-b",
+      "zIndex": 30,
+      "data": {
+        "label": "NAT gateway",
+        "icon": {
+          "pack": "aws",
+          "id": "vpc-nat-gateway"
+        },
+        "style": {
+          "labelPosition": "top"
+        }
+      }
+    },
+    {
+      "id": "app-b",
+      "type": "container",
+      "position": {
+        "x": 20,
+        "y": 228
+      },
+      "size": {
+        "width": 440,
+        "height": 208
+      },
+      "parentId": "az-b",
+      "zIndex": 4,
+      "data": {
+        "label": "Private subnet (app)",
+        "containerKind": "aws.subnet.private",
+        "style": {}
+      }
+    },
+    {
+      "id": "asg-b",
+      "type": "container",
+      "position": {
+        "x": 60,
+        "y": 44
+      },
+      "size": {
+        "width": 260,
+        "height": 148
+      },
+      "parentId": "app-b",
+      "zIndex": 5,
+      "data": {
+        "label": "Auto Scaling group",
+        "containerKind": "aws.autoScaling",
+        "style": {}
+      }
+    },
+    {
+      "id": "ec2-b-1",
+      "type": "icon",
+      "position": {
+        "x": 33,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "asg-b",
+      "zIndex": 30,
+      "data": {
+        "label": "App server",
+        "icon": {
+          "pack": "aws",
+          "id": "ec2"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "ec2-b-2",
+      "type": "icon",
+      "position": {
+        "x": 163,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "asg-b",
+      "zIndex": 30,
+      "data": {
+        "label": "App server",
+        "icon": {
+          "pack": "aws",
+          "id": "ec2"
+        },
+        "style": {}
+      }
+    },
+    {
+      "id": "data-b",
+      "type": "container",
+      "position": {
+        "x": 20,
+        "y": 456
+      },
+      "size": {
+        "width": 440,
+        "height": 164
+      },
+      "parentId": "az-b",
+      "zIndex": 4,
+      "data": {
+        "label": "Private subnet (data)",
+        "containerKind": "aws.subnet.private",
+        "style": {}
+      }
+    },
+    {
+      "id": "rds-b",
+      "type": "icon",
+      "position": {
+        "x": 158,
+        "y": 48
+      },
+      "size": {
+        "width": 64,
+        "height": 64
+      },
+      "parentId": "data-b",
+      "zIndex": 30,
+      "data": {
+        "label": "RDS replica",
+        "icon": {
+          "pack": "aws",
+          "id": "rds"
+        },
+        "style": {}
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-users-r53",
+      "source": "users",
+      "target": "r53",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "DNS",
+        "labelPosition": 0.45
+      }
+    },
+    {
+      "id": "e-r53-cf",
+      "source": "r53",
+      "target": "cf",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "alias"
+      }
+    },
+    {
+      "id": "e-cf-s3",
+      "source": "cf",
+      "target": "s3",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "static assets"
+      }
+    },
+    {
+      "id": "e-cf-igw",
+      "source": "cf",
+      "target": "igw",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "HTTPS"
+      }
+    },
+    {
+      "id": "e-igw-alb-a",
+      "source": "igw",
+      "target": "alb-a",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "waypoints": [
+          {
+            "x": 750,
+            "y": 432
+          },
+          {
+            "x": 494,
+            "y": 432
+          }
+        ]
+      }
+    },
+    {
+      "id": "e-igw-alb-b",
+      "source": "igw",
+      "target": "alb-b",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "waypoints": [
+          {
+            "x": 750,
+            "y": 432
+          },
+          {
+            "x": 1006,
+            "y": 432
+          }
+        ]
+      }
+    },
+    {
+      "id": "e-alb-asg-a",
+      "source": "alb-a",
+      "target": "asg-a",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "HTTP"
+      }
+    },
+    {
+      "id": "e-asg-nat-a",
+      "source": "asg-a",
+      "target": "nat-a",
+      "sourceHandle": "right",
+      "targetHandle": "bottom",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "egress",
+        "labelPosition": 0.3
+      }
+    },
+    {
+      "id": "e-asg-rds-a",
+      "source": "asg-a",
+      "target": "rds-a",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "SQL read/write"
+      }
+    },
+    {
+      "id": "e-alb-asg-b",
+      "source": "alb-b",
+      "target": "asg-b",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "HTTP"
+      }
+    },
+    {
+      "id": "e-asg-nat-b",
+      "source": "asg-b",
+      "target": "nat-b",
+      "sourceHandle": "right",
+      "targetHandle": "bottom",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "egress",
+        "labelPosition": 0.3
+      }
+    },
+    {
+      "id": "e-asg-rds-b",
+      "source": "asg-b",
+      "target": "rds-b",
+      "sourceHandle": "bottom",
+      "targetHandle": "top",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {},
+        "label": "SQL read"
+      }
+    },
+    {
+      "id": "e-replication",
+      "source": "rds-a",
+      "target": "rds-b",
+      "sourceHandle": "right",
+      "targetHandle": "left",
+      "type": "orthogonal",
+      "zIndex": 20,
+      "data": {
+        "markerStart": "none",
+        "markerEnd": "arrow",
+        "style": {
+          "strokeStyle": "dashed"
+        },
+        "label": "async replication"
+      }
+    }
+  ]
+}
