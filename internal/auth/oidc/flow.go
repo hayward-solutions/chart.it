@@ -87,7 +87,7 @@ func (a *Authenticator) open(value string) (flowState, error) {
 }
 
 func (a *Authenticator) setFlowCookie(w http.ResponseWriter, value string) {
-	http.SetCookie(w, &http.Cookie{
+	http.SetCookie(w, &http.Cookie{ //nolint:gosec
 		Name:     flowCookieName,
 		Value:    value,
 		Path:     flowCookiePath,
@@ -99,7 +99,7 @@ func (a *Authenticator) setFlowCookie(w http.ResponseWriter, value string) {
 }
 
 func (a *Authenticator) clearFlowCookie(w http.ResponseWriter) {
-	http.SetCookie(w, &http.Cookie{
+	http.SetCookie(w, &http.Cookie{ //nolint:gosec
 		Name:     flowCookieName,
 		Value:    "",
 		Path:     flowCookiePath,
