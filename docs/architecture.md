@@ -16,7 +16,8 @@ chi router (internal/server)
   |- /auth, /auth/*            authenticator routes, mounted with the /auth prefix stripped
   |                              OIDC: GET /login, GET /callback, POST /logout
   |                              test: GET /login, GET /test-login, POST /logout
-  |- /api/v1
+  |                              single-user: GET /login (302 /), POST /logout (204)
+  |- /api/v1                  single-user mode only: Host must be local or the CHARTIT_BASE_URL host, else 403
   |    |- public group         GET /shared/{token}
   |    '- protected group      RequireUser -> CSRF -> handlers
   |                              GET /me and everything in internal/api
@@ -26,7 +27,7 @@ chi router (internal/server)
 
 Protected API requests go through two middlewares in `internal/auth`:
 
-1. `RequireUser` reads the `chartit_session` cookie, looks the session up in SQLite, loads the user and puts it in the request context. No valid session is a 401 problem+json for `/api/` paths.
+1. `RequireUser` reads the `chartit_session` cookie, looks the session up in SQLite, loads the user and puts it in the request context. No valid session is a 401 problem+json for `/api/` paths. In single-user mode the authenticator returns the one built-in user for every request, so there is no session lookup.
 2. `CSRF` rejects any method other than GET, HEAD and OPTIONS that lacks `X-Requested-With: chartit` with 403.
 
 Handlers in `internal/api` decode the body (size-limited, a single JSON value), call `internal/store` with the authenticated user's id, and answer with JSON or `application/problem+json` (`internal/problem`). Every store query that touches a document is scoped by `owner_id`, so a foreign or unknown id is indistinguishable and returns 404. Store errors map to HTTP in one place: `ErrNotFound` to 404, a stale save to 409 with the stored `version` and `updatedAt`, anything else to a logged 500.
@@ -47,7 +48,7 @@ browser                 chartit                          identity provider
   |<-----------------------| Set-Cookie chartit_session, 302 /   |
 ```
 
-Startup (`cmd/chartit/main.go`): load config, open SQLite, apply goose migrations, build the store, choose the authenticator (test or OIDC), start the hourly expired-session sweep, load the embedded templates, build the router, listen. SIGINT and SIGTERM trigger a graceful shutdown with a 15 second budget.
+Startup (`cmd/chartit/main.go`): load config, open SQLite, apply goose migrations, build the store, choose the authenticator (single-user, test or OIDC), start the hourly expired-session sweep, load the embedded templates, build the router, listen. SIGINT and SIGTERM trigger a graceful shutdown with a 15 second budget.
 
 ## Module map
 
@@ -62,6 +63,7 @@ Backend (Go module `github.com/hayward-solutions/chart.it`):
 | `internal/auth` | `Authenticator` interface, session cookie handling, `RequireUser` and `CSRF` middleware. |
 | `internal/auth/oidc` | Authorisation code flow with PKCE, state and nonce, encrypted flow cookie. |
 | `internal/auth/header` | Test login, only constructed when `CHARTIT_ALLOW_TEST_AUTH=1`. |
+| `internal/auth/single` | Single-user mode, only constructed when `CHARTIT_SINGLE_USER=1`. Every request is one built-in user; no sessions. |
 | `internal/api` | Route table and handlers: documents, content, thumbnails, versions, shares, templates. |
 | `internal/server` | `http.Server` timeouts, router wiring, request logging, recover, health endpoints. |
 | `internal/ui` | Embedded SPA, SPA fallback and cache headers, placeholder when no build exists. |

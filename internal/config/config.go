@@ -30,6 +30,7 @@ type Config struct {
 	SessionSecret    string
 	OIDC             OIDC
 	AllowTestAuth    bool
+	SingleUser       bool
 	LogLevel         slog.Level
 	MaxDocumentBytes int64
 }
@@ -79,6 +80,12 @@ func LoadFrom(getenv func(string) string) (Config, error) {
 	}
 	cfg.AllowTestAuth = testAuth
 
+	singleUser, err := parseBool(get("CHARTIT_SINGLE_USER", "0"))
+	if err != nil {
+		return Config{}, fmt.Errorf("CHARTIT_SINGLE_USER: %w", err)
+	}
+	cfg.SingleUser = singleUser
+
 	if err := cfg.LogLevel.UnmarshalText([]byte(get("CHARTIT_LOG_LEVEL", "info"))); err != nil {
 		return Config{}, fmt.Errorf("CHARTIT_LOG_LEVEL: %w", err)
 	}
@@ -110,6 +117,16 @@ func (c Config) validate() error {
 
 	anyOIDC := c.OIDC.Issuer != "" || c.OIDC.ClientID != "" || c.OIDC.ClientSecret != ""
 
+	if c.SingleUser {
+		if c.AllowTestAuth {
+			return errors.New("CHARTIT_SINGLE_USER=1 cannot be combined with CHARTIT_ALLOW_TEST_AUTH=1")
+		}
+		if anyOIDC {
+			return errors.New("CHARTIT_SINGLE_USER=1 cannot be combined with CHARTIT_OIDC_* settings")
+		}
+		return nil
+	}
+
 	if c.AllowTestAuth {
 		if anyOIDC {
 			return errors.New("CHARTIT_ALLOW_TEST_AUTH=1 cannot be combined with CHARTIT_OIDC_* settings")
@@ -118,7 +135,7 @@ func (c Config) validate() error {
 	}
 
 	if !c.OIDCEnabled() {
-		return errors.New("no authentication configured: set CHARTIT_OIDC_ISSUER and CHARTIT_OIDC_CLIENT_ID, or CHARTIT_ALLOW_TEST_AUTH=1")
+		return errors.New("no authentication configured: set CHARTIT_OIDC_ISSUER and CHARTIT_OIDC_CLIENT_ID, CHARTIT_SINGLE_USER=1 or CHARTIT_ALLOW_TEST_AUTH=1")
 	}
 	if len(c.SessionSecret) < minSessionSecretBytes {
 		return fmt.Errorf("CHARTIT_SESSION_SECRET: required and must be at least %d bytes", minSessionSecretBytes)

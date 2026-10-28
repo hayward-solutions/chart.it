@@ -15,6 +15,7 @@ import (
 	"github.com/hayward-solutions/chart.it/internal/auth"
 	"github.com/hayward-solutions/chart.it/internal/auth/header"
 	"github.com/hayward-solutions/chart.it/internal/auth/oidc"
+	"github.com/hayward-solutions/chart.it/internal/auth/single"
 	"github.com/hayward-solutions/chart.it/internal/config"
 	"github.com/hayward-solutions/chart.it/internal/db"
 	"github.com/hayward-solutions/chart.it/internal/server"
@@ -60,7 +61,7 @@ func run() error {
 	}
 
 	st := store.New(conn)
-	authenticator, err := newAuthenticator(cfg, st)
+	authenticator, err := newAuthenticator(ctx, cfg, st)
 	if err != nil {
 		return err
 	}
@@ -107,7 +108,15 @@ func run() error {
 	return nil
 }
 
-func newAuthenticator(cfg config.Config, st *store.Store) (auth.Authenticator, error) {
+func newAuthenticator(ctx context.Context, cfg config.Config, st *store.Store) (auth.Authenticator, error) {
+	if cfg.SingleUser {
+		slog.Warn("single-user mode enabled; anyone who can reach this server has full access")
+		authenticator, err := single.New(ctx, st)
+		if err != nil {
+			return nil, fmt.Errorf("configure single user: %w", err)
+		}
+		return authenticator, nil
+	}
 	sessions := auth.NewSessions(st, cfg.SecureCookies())
 	if cfg.AllowTestAuth {
 		slog.Warn("test authentication enabled; never use this in production")

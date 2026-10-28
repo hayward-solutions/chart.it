@@ -4,11 +4,11 @@ services:
       context: .
     image: ghcr.io/hayward-solutions/chart.it:main
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     volumes:
       - ./data:/data
     environment:
-      CHARTIT_ALLOW_TEST_AUTH: "1"
+      CHARTIT_SINGLE_USER: "1"
       CHARTIT_DATA_DIR: /data
       CHARTIT_BASE_URL: http://localhost:8080
     restart: unless-stopped

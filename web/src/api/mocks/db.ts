@@ -107,6 +107,7 @@ export function createMockDb(): MockDb {
       name: 'Ada Lovelace',
       email: 'ada@example.com',
       avatarUrl: null,
+      singleUser: false,
     },
     documents: new Map(),
     versions: new Map(),

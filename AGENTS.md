@@ -25,6 +25,7 @@ internal/
   auth/          Authenticator interface, session cookie, middleware
   auth/oidc/     go-oidc + oauth2 code flow with PKCE
   auth/header/   test auth, only when CHARTIT_ALLOW_TEST_AUTH=1
+  auth/single/   single-user mode, only when CHARTIT_SINGLE_USER=1
   api/           chi router, JSON handlers, problem+json errors
   ui/            embed.FS of web/dist, SPA fallback, cache headers
   server/        http.Server wiring, timeouts, logging, recover, healthz/readyz
@@ -58,11 +59,12 @@ e2e/                             Playwright
 | `CHARTIT_OIDC_CLIENT_ID` | | |
 | `CHARTIT_OIDC_CLIENT_SECRET` | | |
 | `CHARTIT_OIDC_SCOPES` | `openid profile email` | |
+| `CHARTIT_SINGLE_USER` | `0` | `1` disables sign-in: every request is the built-in user with subject `local:owner`; the API and `/auth` answer only `localhost`, `*.localhost`, `127.0.0.1`, `::1` and the `CHARTIT_BASE_URL` host; cannot be combined with test auth or OIDC settings |
 | `CHARTIT_ALLOW_TEST_AUTH` | `0` | `1` enables `/auth/test-login?user=<name>`; the binary refuses to combine this with OIDC settings |
 | `CHARTIT_LOG_LEVEL` | `info` | |
 | `CHARTIT_MAX_DOCUMENT_BYTES` | `5242880` | server-side size limit for document content |
 
-Startup fails if neither OIDC nor test auth is configured.
+Startup fails if none of OIDC, single-user mode or test auth is configured.
 
 ## Data model (SQLite, goose migrations)
 
@@ -86,7 +88,7 @@ IDs are 20 random bytes, base32 lowercase without padding. Timestamps are RFC 33
 All API routes live under `/api/v1`, speak JSON, and need a session cookie (`chartit_session`, HttpOnly, SameSite=Lax, Secure when the base URL is https). Mutating requests must carry the header `X-Requested-With: chartit` or they are rejected with 403. Errors use `application/problem+json` with `type`, `title`, `status`, `detail`.
 
 ```
-GET    /api/v1/me                                   -> {id, name, email, avatarUrl}
+GET    /api/v1/me                                   -> {id, name, email, avatarUrl, singleUser}
 GET    /api/v1/documents?q=&tag=&trashed=            -> [{id, title, tags, version, updatedAt, createdAt, hasThumbnail}]
 POST   /api/v1/documents                             {title, templateKey?} -> document (with content)
 GET    /api/v1/documents/{id}                        -> document with content
@@ -105,7 +107,7 @@ GET    /api/v1/documents/{id}/shares                 -> [{token, url, createdAt}
 DELETE /api/v1/documents/{id}/shares/{token}         -> 204
 GET    /api/v1/shared/{token}                        public, no auth -> {title, content, updatedAt}
 GET    /api/v1/templates                             -> [{key, title, description, pack}]
-GET    /auth/login     redirects to the IdP (or to /auth/test-login page in test mode)
+GET    /auth/login     redirects to the IdP (or to /auth/test-login page in test mode, or to / in single-user mode)
 GET    /auth/callback
 POST   /auth/logout    -> 204, clears session
 GET    /auth/test-login?user=<name>   test mode only; upserts a user with subject "test:<name>" and sets a session, then redirects to /

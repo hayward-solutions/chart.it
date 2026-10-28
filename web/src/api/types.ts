@@ -5,6 +5,7 @@ export type User = {
   name: string
   email: string
   avatarUrl: string | null
+  singleUser: boolean
 }
 
 export type DocumentSummary = {

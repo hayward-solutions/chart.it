@@ -2,6 +2,16 @@
 
 All notable changes are recorded here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions are tags of the form `vX.Y.Z`.
 
+## [Unreleased]
+
+### Added
+
+- Single-user mode (`CHARTIT_SINGLE_USER=1`) for running one container locally without sign-in. Every request acts as one built-in user, `/api/v1/me` reports `singleUser`, the account menu hides Sign out, and the API answers only local hosts and the `CHARTIT_BASE_URL` host. Startup refuses to combine it with test auth or OIDC settings.
+
+### Changed
+
+- `docker-compose.yml` runs in single-user mode and publishes the port on `127.0.0.1` only.
+
 ## [0.1.0] - 2026-10-26
 
 First release.
