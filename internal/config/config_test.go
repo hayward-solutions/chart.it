@@ -70,6 +70,38 @@ func TestLoadFrom(t *testing.T) {
 			},
 		},
 		{
+			name: "single user",
+			env:  map[string]string{"CHARTIT_SINGLE_USER": "1"},
+			check: func(t *testing.T, c Config) {
+				assert.True(t, c.SingleUser)
+				assert.False(t, c.AllowTestAuth)
+				assert.False(t, c.OIDCEnabled())
+			},
+		},
+		{
+			name: "single user with test auth",
+			env: map[string]string{
+				"CHARTIT_SINGLE_USER":     "1",
+				"CHARTIT_ALLOW_TEST_AUTH": "1",
+			},
+			wantErr: "CHARTIT_SINGLE_USER=1 cannot be combined with CHARTIT_ALLOW_TEST_AUTH=1",
+		},
+		{
+			name: "single user with oidc",
+			env: map[string]string{
+				"CHARTIT_SINGLE_USER":    "true",
+				"CHARTIT_OIDC_ISSUER":    "https://idp.example.com",
+				"CHARTIT_OIDC_CLIENT_ID": "abc",
+				"CHARTIT_SESSION_SECRET": secret,
+			},
+			wantErr: "CHARTIT_SINGLE_USER=1 cannot be combined with CHARTIT_OIDC_* settings",
+		},
+		{
+			name:    "bad single user bool",
+			env:     map[string]string{"CHARTIT_SINGLE_USER": "yes"},
+			wantErr: "CHARTIT_SINGLE_USER",
+		},
+		{
 			name:    "no auth configured",
 			env:     map[string]string{},
 			wantErr: "no authentication configured",

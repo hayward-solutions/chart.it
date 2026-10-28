@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"log/slog"
+	"net"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -77,18 +79,24 @@ func NewHandler(cfg config.Config, st *store.Store, a auth.Authenticator, opts .
 		_, _ = w.Write([]byte("ok"))
 	})
 
-	authRoutes := http.StripPrefix("/auth", a.Routes())
+	guard := func(h http.Handler) http.Handler { return h }
+	if cfg.SingleUser {
+		guard = hostGuard(cfg.BaseURL)
+	}
+
+	authRoutes := guard(http.StripPrefix("/auth", a.Routes()))
 	r.Handle("/auth", authRoutes)
 	r.Handle("/auth/*", authRoutes)
 
 	r.Route("/api/v1", func(r chi.Router) {
+		r.Use(guard)
 		if o.public != nil {
 			r.Group(func(r chi.Router) { o.public(r) })
 		}
 		r.Group(func(r chi.Router) {
 			r.Use(auth.RequireUser(a))
 			r.Use(auth.CSRF)
-			r.Get("/me", me)
+			r.Get("/me", me(cfg.SingleUser))
 			if o.api != nil {
 				o.api(r)
 			}
@@ -109,10 +117,38 @@ func NewHandler(cfg config.Config, st *store.Store, a auth.Authenticator, opts .
 	return r
 }
 
-func me(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Cache-Control", "no-store")
-	_ = json.NewEncoder(w).Encode(auth.FromContext(r.Context()))
+type meResponse struct {
+	auth.User
+	SingleUser bool `json:"singleUser"`
+}
+
+func me(singleUser bool) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Cache-Control", "no-store")
+		_ = json.NewEncoder(w).Encode(meResponse{User: auth.FromContext(r.Context()), SingleUser: singleUser})
+	}
+}
+
+func hostGuard(baseURL string) func(http.Handler) http.Handler {
+	allowed := map[string]bool{"localhost": true, "127.0.0.1": true, "::1": true}
+	if u, err := url.Parse(baseURL); err == nil && u.Hostname() != "" {
+		allowed[strings.ToLower(u.Hostname())] = true
+	}
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			host := r.Host
+			if h, _, err := net.SplitHostPort(host); err == nil {
+				host = h
+			}
+			host = strings.ToLower(strings.Trim(host, "[]"))
+			if !allowed[host] && !strings.HasSuffix(host, ".localhost") {
+				problem.Write(w, http.StatusForbidden, "host "+r.Host+" is not allowed in single-user mode; set CHARTIT_BASE_URL to the address you browse to")
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
 }
 
 func requestLogger(next http.Handler) http.Handler {

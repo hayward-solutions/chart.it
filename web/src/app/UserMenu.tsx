@@ -53,12 +53,20 @@ export function UserMenu() {
       <DropdownMenuContent className="min-w-56">
         <DropdownMenuLabel className="flex flex-col gap-0.5">
           <span className="text-sm font-medium text-foreground">{user.name || user.email}</span>
-          {user.name ? <span className="font-normal">{user.email}</span> : null}
+          {user.singleUser ? (
+            <span className="font-normal">Single-user mode</span>
+          ) : user.name ? (
+            <span className="font-normal">{user.email}</span>
+          ) : null}
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem disabled={busy} onSelect={() => void logout()}>
-          <LogOut /> Sign out
-        </DropdownMenuItem>
+        {user.singleUser ? null : (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem disabled={busy} onSelect={() => void logout()}>
+              <LogOut /> Sign out
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   )

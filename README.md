@@ -46,10 +46,23 @@ Documents
 Platform
 
 - One static binary, embedded SPA, embedded starter templates, goose migrations applied at startup.
+- Single-user mode (`CHARTIT_SINGLE_USER=1`) for running one container on your own machine with no sign-in.
 - OIDC authorisation code flow with PKCE, state and nonce. A test login mode for local development (`CHARTIT_ALLOW_TEST_AUTH=1`) that the binary refuses to combine with OIDC settings.
 - Helm chart, multi-arch (amd64 and arm64) image, `/healthz` and `/readyz` probes, structured JSON logs.
 
 ## Quick start
+
+### Single-user container
+
+To run Chart.it on your own machine with no sign-in:
+
+```sh
+docker run -d --name chartit -p 127.0.0.1:8080:8080 -v chartit-data:/data -e CHARTIT_SINGLE_USER=1 ghcr.io/hayward-solutions/chart.it:latest
+```
+
+Open http://localhost:8080. Every request acts as one built-in user, `Local user`, and diagrams persist in the `chartit-data` volume. The account menu has no Sign out entry in this mode.
+
+Single-user mode has no authentication: anyone who can reach the port has full access. Publish the port on `127.0.0.1` as above. The API only answers requests whose `Host` is `localhost`, `*.localhost`, `127.0.0.1`, `::1` or the host of `CHARTIT_BASE_URL`, which stops other websites reaching it through DNS rebinding. To use another address, for example a LAN name, set `CHARTIT_BASE_URL` to it; that also makes share links point at it. The binary refuses to start when `CHARTIT_SINGLE_USER=1` is combined with test auth or any `CHARTIT_OIDC_*` setting.
 
 ### Docker Compose
 
@@ -57,9 +70,7 @@ Platform
 docker compose up --build
 ```
 
-Open http://localhost:8080 and sign in with any user name. `docker-compose.yml` enables test authentication (`CHARTIT_ALLOW_TEST_AUTH=1`) and stores the database in `./data`. The container runs as uid 65532, so on Linux make `./data` writable by that user before the first start.
-
-Test authentication is for trying the app out. Do not expose it to a network you do not trust.
+Open http://localhost:8080. `docker-compose.yml` runs in single-user mode (`CHARTIT_SINGLE_USER=1`), publishes the port on `127.0.0.1` only and stores the database in `./data`. The container runs as uid 65532, so on Linux make `./data` writable by that user before the first start.
 
 ### Local development
 
@@ -91,16 +102,17 @@ All configuration is through environment variables. Copy `.env.example` as a sta
 | `CHARTIT_ADDR` | `:8080` | no | Listen address. |
 | `CHARTIT_DATA_DIR` | `./data` | no | Directory holding `chartit.db`. Created if missing. The container image sets `/data`. |
 | `CHARTIT_BASE_URL` | `http://localhost:8080` | set it in production | Public URL, an absolute http(s) URL. Used for the OIDC redirect (`<base>/auth/callback`) and share links. An `https` URL turns on the `Secure` cookie flag. |
-| `CHARTIT_SESSION_SECRET` | none | yes, unless test auth is on | At least 32 bytes. Keys the encrypted login-flow cookie. |
-| `CHARTIT_OIDC_ISSUER` | none | yes, unless test auth is on | OIDC issuer URL. Discovery runs against it on first login. |
-| `CHARTIT_OIDC_CLIENT_ID` | none | yes, unless test auth is on | OIDC client id. |
+| `CHARTIT_SESSION_SECRET` | none | yes, unless single-user or test auth is on | At least 32 bytes. Keys the encrypted login-flow cookie. |
+| `CHARTIT_OIDC_ISSUER` | none | yes, unless single-user or test auth is on | OIDC issuer URL. Discovery runs against it on first login. |
+| `CHARTIT_OIDC_CLIENT_ID` | none | yes, unless single-user or test auth is on | OIDC client id. |
 | `CHARTIT_OIDC_CLIENT_SECRET` | none | no | Client secret, for confidential clients that have one. |
 | `CHARTIT_OIDC_SCOPES` | `openid profile email` | no | Space-separated scopes. Must not be empty. |
+| `CHARTIT_SINGLE_USER` | `0` | no | `1` or `true` turns off sign-in: every request acts as one built-in user, and the API only answers local hosts and the host of `CHARTIT_BASE_URL`. Startup fails if test auth or any `CHARTIT_OIDC_*` variable is also set. |
 | `CHARTIT_ALLOW_TEST_AUTH` | `0` | no | `1` or `true` enables test login. Startup fails if any `CHARTIT_OIDC_*` variable is also set. |
 | `CHARTIT_LOG_LEVEL` | `info` | no | `debug`, `info`, `warn` or `error`. |
 | `CHARTIT_MAX_DOCUMENT_BYTES` | `5242880` | no | Server-side size limit for diagram content, a positive integer. |
 
-Startup fails when neither OIDC (issuer and client id) nor test auth is configured.
+Startup fails when none of OIDC (issuer and client id), single-user mode or test auth is configured.
 
 Sessions last 30 days and live in the database; expired sessions are swept hourly.
 

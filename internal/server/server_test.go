@@ -18,6 +18,7 @@ import (
 
 	"github.com/hayward-solutions/chart.it/internal/auth"
 	"github.com/hayward-solutions/chart.it/internal/auth/header"
+	"github.com/hayward-solutions/chart.it/internal/auth/single"
 	"github.com/hayward-solutions/chart.it/internal/config"
 	"github.com/hayward-solutions/chart.it/internal/db"
 	"github.com/hayward-solutions/chart.it/internal/problem"
@@ -314,4 +315,125 @@ func TestNewServerTimeouts(t *testing.T) {
 	assert.Equal(t, 30*time.Second, srv.ReadTimeout)
 	assert.Equal(t, 60*time.Second, srv.WriteTimeout)
 	assert.Equal(t, 120*time.Second, srv.IdleTimeout)
+}
+
+func newSingleUserEnv(t *testing.T, baseURL string) *env {
+	t.Helper()
+	ctx := context.Background()
+	conn, err := db.Open(ctx, filepath.Join(t.TempDir(), "chartit.db"))
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = conn.Close() })
+	require.NoError(t, db.Migrate(ctx, conn))
+
+	cfg := config.Config{Addr: ":0", BaseURL: baseURL, SingleUser: true}
+	st := store.New(conn)
+	a, err := single.New(ctx, st)
+	require.NoError(t, err)
+	ts := httptest.NewServer(NewHandler(cfg, st, a,
+		WithPublicAPI(func(r chi.Router) {
+			r.Get("/shared/{token}", func(w http.ResponseWriter, _ *http.Request) { _, _ = w.Write([]byte("public")) })
+		}),
+		WithAPI(func(r chi.Router) {
+			r.Post("/documents", func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusCreated) })
+		}),
+	))
+	t.Cleanup(ts.Close)
+	return &env{ts: ts, store: st, cfg: cfg}
+}
+
+func (e *env) doWithHost(t *testing.T, method, path, host string) (*http.Response, string) {
+	t.Helper()
+	req, err := http.NewRequest(method, e.ts.URL+path, nil)
+	require.NoError(t, err)
+	req.Host = host
+	resp, err := e.client(t).Do(req)
+	require.NoError(t, err)
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	require.NoError(t, err)
+	return resp, string(body)
+}
+
+func TestSingleUserMeWithoutLogin(t *testing.T) {
+	e := newSingleUserEnv(t, "http://localhost:8080")
+	resp, body := e.do(t, e.client(t), http.MethodGet, "/api/v1/me", nil)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+
+	var me map[string]any
+	require.NoError(t, json.Unmarshal([]byte(body), &me))
+	assert.Equal(t, single.UserName, me["name"])
+	assert.Equal(t, true, me["singleUser"])
+	assert.Len(t, me["id"], 32)
+}
+
+func TestTestAuthMeReportsNotSingleUser(t *testing.T) {
+	e := newEnv(t)
+	c := e.client(t)
+	e.login(t, c, "matt")
+	_, body := e.do(t, c, http.MethodGet, "/api/v1/me", nil)
+	var me map[string]any
+	require.NoError(t, json.Unmarshal([]byte(body), &me))
+	assert.Equal(t, false, me["singleUser"])
+}
+
+func TestSingleUserStillRequiresCSRFHeader(t *testing.T) {
+	e := newSingleUserEnv(t, "http://localhost:8080")
+	resp, body := e.do(t, e.client(t), http.MethodPost, "/api/v1/documents", nil)
+	assertProblem(t, resp, body, http.StatusForbidden)
+
+	resp, _ = e.do(t, e.client(t), http.MethodPost, "/api/v1/documents", map[string]string{auth.CSRFHeader: auth.CSRFValue})
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+}
+
+func TestSingleUserLoginAndLogout(t *testing.T) {
+	e := newSingleUserEnv(t, "http://localhost:8080")
+	resp, _ := e.do(t, e.client(t), http.MethodGet, "/auth/login", nil)
+	assert.Equal(t, http.StatusFound, resp.StatusCode)
+	assert.Equal(t, "/", resp.Header.Get("Location"))
+
+	resp, _ = e.do(t, e.client(t), http.MethodPost, "/auth/logout", nil)
+	assert.Equal(t, http.StatusNoContent, resp.StatusCode)
+}
+
+func TestSingleUserHostGuard(t *testing.T) {
+	e := newSingleUserEnv(t, "http://diagrams.lan:9000")
+
+	tests := []struct {
+		host string
+		want int
+	}{
+		{"localhost:8080", http.StatusOK},
+		{"127.0.0.1:1234", http.StatusOK},
+		{"[::1]:8080", http.StatusOK},
+		{"app.localhost", http.StatusOK},
+		{"diagrams.lan:9000", http.StatusOK},
+		{"DIAGRAMS.LAN", http.StatusOK},
+		{"attacker.example", http.StatusForbidden},
+		{"192.168.1.20:8080", http.StatusForbidden},
+	}
+	for _, tt := range tests {
+		t.Run(tt.host, func(t *testing.T) {
+			resp, body := e.doWithHost(t, http.MethodGet, "/api/v1/me", tt.host)
+			if tt.want == http.StatusForbidden {
+				assertProblem(t, resp, body, http.StatusForbidden)
+				return
+			}
+			assert.Equal(t, tt.want, resp.StatusCode)
+		})
+	}
+
+	resp, body := e.doWithHost(t, http.MethodGet, "/api/v1/shared/abc", "attacker.example")
+	assertProblem(t, resp, body, http.StatusForbidden)
+	resp, body = e.doWithHost(t, http.MethodGet, "/auth/login", "attacker.example")
+	assertProblem(t, resp, body, http.StatusForbidden)
+
+	resp, body = e.doWithHost(t, http.MethodGet, "/healthz", "10.0.0.5:8080")
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	assert.Equal(t, "ok", body)
+}
+
+func TestHostGuardOffOutsideSingleUser(t *testing.T) {
+	e := newEnv(t)
+	resp, body := e.doWithHost(t, http.MethodGet, "/api/v1/me", "attacker.example")
+	assertProblem(t, resp, body, http.StatusUnauthorized)
 }
